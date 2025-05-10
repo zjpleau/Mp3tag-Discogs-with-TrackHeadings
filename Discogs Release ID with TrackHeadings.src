@@ -1,0 +1,142 @@
+[Name]=Discogs Release ID (Track Headings)
+[BasedOn]=Discogs Release ID
+[SearchBy]=Discogs Release ID||%dummy%||%s
+[AlbumUrl]=https://api.discogs.com/releases/%s
+[UserAgent]=1
+
+[ParserScriptAlbum]=...
+json "on"
+
+# —————————————————————
+# 1) STANDARD RELEASE TAGS
+# —————————————————————
+
+# Album title
+outputto "ALBUM"
+json_select "title"
+sayrest
+
+# Album artist(s)
+outputto "ALBUMARTIST"
+json_foreach "artists"
+  json_select "name"
+  ifoutput "ALBUMARTIST"
+    say " & "
+  endif
+  sayrest
+json_foreach_end
+
+# Year
+outputto "YEAR"
+json_select "year"
+sayrest
+
+# Genre  ← updated!
+outputto "GENRE"
+json_select_array "genres" -1 ", "
+sayrest
+
+# Style  ← updated!
+outputto "STYLE"
+json_select_array "styles" -1 ", "
+sayrest
+
+# Label name(s)
+outputto "LABEL"
+json_foreach "labels"
+  json_select "name"
+  ifoutput "LABEL"
+    say " / "
+  endif
+  sayrest
+json_foreach_end
+
+# Catalog number(s)
+outputto "CATALOGID"
+json_foreach "labels"
+  json_select "catno"
+  ifoutput "CATALOGID"
+    say " / "
+  endif
+  sayrest
+json_foreach_end
+
+# Discogs Release ID (store for reference)
+outputto "DISCOGS_RELEASE_ID"
+json_select "id"
+sayrest
+
+# Cover art URL
+outputto "coverurl"
+json_select "cover_image"
+sayrest
+
+# —————————————————————
+# 2) TRACK LIST PARSING WITH HEADINGS
+# —————————————————————
+
+# Initialize temporary buffer
+set "TEMP_TRACKHEADING"
+
+json_foreach "tracklist"
+  json_select "type_"
+
+  if "heading"
+    # Clear old heading, then capture this one
+    set "TEMP_TRACKHEADING"
+    outputto "TEMP_TRACKHEADING"
+    json_select "title"
+    sayrest
+
+  else
+    # ==== Official Discogs split for TRACK + DISCNUMBER ====
+    json_select "position"
+    findinline "-" 1 1
+
+    # TRACK field
+    outputto "TRACK"
+    movechar -1
+    if "-"
+      movechar 1
+    else
+      gotochar 1
+    endif
+    sayrest
+    say "|"
+
+    # DISCNUMBER field (only if there was a dash)
+    gotochar 1
+    findinline "-" 1 1
+    movechar -1
+    if "-"
+      gotochar 1
+      outputto "DISCNUMBER"
+      sayregexp ".+" "" "-"
+      say "|"
+    endif
+
+    # ---- Title ----
+    outputto "TITLE"
+    json_select "title"
+    sayrest
+    say "|"
+
+    # ---- Artist ----
+    outputto "ARTIST"
+    sayoutput "ALBUMARTIST"
+    say "|"
+
+    # ---- Length ----
+    outputto "LENGTH"
+    json_select "duration"
+    sayrest
+    say "|"
+
+    # ---- Track Heading ----
+    outputto "TRACKHEADING"
+    sayoutput "TEMP_TRACKHEADING"
+    say "|"
+
+  endif
+json_foreach_end
+
