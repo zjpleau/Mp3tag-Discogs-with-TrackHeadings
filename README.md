@@ -20,7 +20,8 @@ A custom Mp3tag tag-source that:
 
    - Windows:
      ```
-     %APPDATA%\Mp3tag\data\sources     ```
+     %APPDATA%\Mp3tag\data\sources
+     ```
    - macOS (Wine):
      ```
      ~/.wine/drive_c/users/<you>/Application Data/Mp3tag/data/sources/
