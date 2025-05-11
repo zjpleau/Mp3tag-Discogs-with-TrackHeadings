@@ -1,14 +1,15 @@
 # ###################################################################
 # Mp3tag Tag Source for Discogs API (Official, with TrackHeadings)
 #
+# Modified from the original "Discogs Release ID.src" script v1.13 to extract track headings from the Discogs API and add it to a field called TRACKHEADING.
+# https://github.com/zjpleau/Mp3tag-Discogs-with-TrackHeadings
+#
 # Search by RELEASE ID
 # 
 # This file should be stored in your tag sources sources directory
 # %APPDATA%\Mp3tag\data\sources
 # and requires Mp3tag v2.97b or above.
 #
-###### Modified from the original "Discogs Release ID.src" script v1.13 to extract track headings from the Discogs API and add it to a field called TRACKHEADING.
-###### https://github.com/zjpleau/Mp3tag-Discogs-with-TrackHeadings
 #
 # [2024-05-19] v1.13 NEW: added support for importing BARCODE.
 #                    NEW: added support for importing ALBUMARTISTSORT.
